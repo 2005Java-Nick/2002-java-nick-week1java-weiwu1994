@@ -200,6 +200,12 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
+		if(string.contains("@") || string.contains("!") || string.contains(":")) {
+			throw new IllegalArgumentException("i must be vaild");
+		}
+		if (string.matches(".*[a-z].*")) { 
+			throw new IllegalArgumentException("i must be vaild");
+		}
 		
 		String aString = new String(string);
 		aString = aString.replaceAll( "[^\\d]", "" );
@@ -292,7 +298,7 @@ public class EvaluationService {
 			
 			index = right/2;
 			while(right > left) {
-			if(sortedList.get(index) == t) {
+			if(sortedList.get(index).equals(t)) {
 				return index;
 			}else if (t.compareTo(sortedList.get(index)) < 0) {
 				right = index;
@@ -652,12 +658,13 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
+			
 			String alpa = "zyxwvutsrqponmlkjihgfedcba";
 			StringBuilder sb = new StringBuilder(alpa);
 			String alpaReversed = sb.reverse().toString();
 			
 			
-			StringBuilder aString = new StringBuilder(string);
+			StringBuilder aString = new StringBuilder(string.replaceAll("\\s+",""));
 			
 			for(int i = 0; i < aString.length();i++) {
 				for(int j = 0; j < alpa.length();j++) {
@@ -867,13 +874,19 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
+		
+		String tempString = string.replaceAll("\\s+","");
+		if(!tempString.matches("^[0-9]+$")) {
+			return false;
+		}
+		
 		String aString = string.replaceAll("[^\\d]", "");
 		int sum = 0;
 		if(aString.length() <= 1) {
 			return false;
 		}
 		
-		for(int i = aString.length()-2; i > 0; i -=2 ) {
+		for(int i = aString.length()-2; i >= 0; i -=2 ) {
 			int temp = Character.getNumericValue(aString.charAt(i));
 			if(temp*2 > 9) {
 				sum += (temp*2) - 9;
@@ -882,7 +895,7 @@ public class EvaluationService {
 			}
 		}
 
-		for(int i = aString.length()-1; i < 0; i -=2 ) {
+		for(int i = aString.length()-1; i >= 0; i -=2 ) {
 			int temp = Character.getNumericValue(aString.charAt(i));
 			sum += temp;
 			
